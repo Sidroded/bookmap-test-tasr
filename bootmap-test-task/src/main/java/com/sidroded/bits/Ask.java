@@ -1,17 +1,11 @@
 package com.sidroded.bits;
 
 import com.sidroded.bitmodel.Bit;
-import com.sidroded.bitmodel.Buyable;
 
-public class Ask extends Bit implements Buyable {
+public class Ask extends Bit {
 
-    public Ask(int price, int size) {
-        super(price, size);
+    public Ask(int price) {
+        super(price);
     }
 
-
-    @Override
-    public void buy(int size) {
-        update(size);
-    }
 }

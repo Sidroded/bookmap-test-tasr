@@ -5,31 +5,38 @@ import com.sidroded.bits.Ask;
 import com.sidroded.bits.Bid;
 import com.sidroded.bits.Spread;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.util.*;
 
 public class ListOfBits {
     private final FileInputStream inputStream;
-    private TreeSet<Bit> allBits = new TreeSet<>();
-    private TreeSet<Bid> allBids = new TreeSet<>();
-    private TreeSet<Ask> allAsks = new TreeSet<>();
-    private ArrayList<String> inputCommands = new ArrayList<>();
+    private final BufferedWriter writer;
+    private final HashMap<Bit, Integer> allBits = new HashMap<>();
+    private final TreeMap<Bit, Integer> allBids = new TreeMap<>();
+    private final TreeMap<Bit, Integer> allAsks = new TreeMap<>();
+    private final ArrayList<String> inputCommands = new ArrayList<>();
+    private final StringBuilder result = new StringBuilder();
 
-    public ListOfBits(FileInputStream inputStream) {
+    public ListOfBits(FileInputStream inputStream, BufferedWriter writer) {
         this.inputStream = inputStream;
+        this.writer = writer;
         fillInputCommands();
     }
 
+    public String getResult() {
+        return result.toString();
+    }
 
-    public Set<Bit> getAllBits() {
+    public HashMap<Bit, Integer> getAllBits() {
         return allBits;
     }
 
-    public Set<Bid> getAllBids() {
+    public TreeMap<Bit, Integer> getAllBids() {
         return allBids;
     }
 
-    public Set<Ask> getAllAsks() {
+    public TreeMap<Bit, Integer> getAllAsks() {
         return allAsks;
     }
 
@@ -58,15 +65,53 @@ public class ListOfBits {
                     break;
                 case "q":
                     if (parts.length == 2) {
-                        querie(parts[1]);
+                        getBest(parts[1]);
                     } else {
-                        querie(parts[1], parts[2]);
+                        getSize(parts[2]);
                     }
             }
         }
     }
-    private void order(String order, String size) {
 
+    public void outputResult() {
+        Scanner scanner = new Scanner(getResult());
+
+        try {
+            while (scanner.hasNext()) {
+                String str = scanner.nextLine();
+                writer.write(str + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void order(String order, String sizeStr) {
+        int size = Integer.parseInt(sizeStr);
+        switch (order) {
+            case "sell" -> {
+                Bid bid = (Bid) allBids.firstKey();
+                int sizeAfterSell = allBids.get(bid) - size;
+                allBits.put(bid, sizeAfterSell);
+
+                if (sizeAfterSell > 0) {
+                    allBids.put(bid, allBids.get(bid) - size);
+                } else {
+                    allBits.remove(bid);
+                }
+            }
+            case "buy" -> {
+                Ask ask = (Ask) allAsks.lastKey();
+                int sizeAfterPurchase = allAsks.get(ask) - size;
+                allAsks.put(ask, sizeAfterPurchase);
+
+                if (sizeAfterPurchase > 0) {
+                    allAsks.put(ask, sizeAfterPurchase);
+                } else {
+                    allAsks.remove(ask);
+                }
+            }
+        }
     }
 
     private void update(String priceStr, String sizeStr, String bit) {
@@ -75,41 +120,49 @@ public class ListOfBits {
 
         switch (bit) {
             case "bid" -> {
-                Bid bid = new Bid(price, size);
-                if (allBits.contains(bid)) {
-                    allBits.remove(bid);
+                Bid bid = new Bid(price);
+                allBits.put(bid, size);
+                if (size != 0) {
+                    allBids.put(bid, size);
+                } else {
                     allBids.remove(bid);
                 }
-                allBids.add(bid);
-                allBits.add(bid);
-
             }
             case "ask" -> {
-                Ask ask = new Ask(price, size);
-                if (allBits.contains(ask)) {
-                    allBits.remove(ask);
+                Ask ask = new Ask(price);
+                allBits.put(ask, size);
+                if (size != 0) {
+                    allAsks.put(ask, size);
+                } else {
                     allAsks.remove(ask);
                 }
-                allAsks.add(ask);
-                allBits.add(ask);
             }
             case "spread" -> {
-                Spread spread = new Spread(price, size);
-                allBits.remove(spread);
-                allBits.add(spread);
+                Spread spread = new Spread(price);
+                allBits.put(spread, size);
             }
         }
     }
 
-    private void querie(String bestBit) {
-
+    private void getBest(String bestBit) {
+        switch (bestBit) {
+            case "best_bid" -> {
+                Bid bid = (Bid) allBids.firstKey();
+                result.append(bid.getPrice()).append(",").append(allBids.get(bid)).append("\n");
+            }
+            case "best_ask" -> {
+                Ask ask = (Ask) allAsks.lastKey();
+                result.append(ask.getPrice()).append(",").append(allAsks.get(ask)).append("\n");
+            }
+        }
     }
 
-    private void querie(String size, String price) {
-
+    private void getSize(String priceStr) {
+        int price = Integer.parseInt(priceStr);
+         for (var bit : allBits.entrySet()) {
+             if (bit.getKey().getPrice() == price) {
+                 result.append(allBits.get(bit.getKey())).append("\n");
+             }
+         }
     }
-
-
-
-
 }

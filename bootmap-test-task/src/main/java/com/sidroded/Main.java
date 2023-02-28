@@ -1,19 +1,37 @@
 package com.sidroded;
 
+import com.sidroded.logic.ApplicationStartUpPath;
 import com.sidroded.logic.ListOfBits;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
-        String path = "d:/Test/input.txt";
+    public static void main(String[] args) {
 
-        FileInputStream inputStream = new FileInputStream(path);
+        ApplicationStartUpPath startUpPath = new ApplicationStartUpPath();
+        String pathInput = "";
+        String pathOutput= "";
 
-        ListOfBits list = new ListOfBits(inputStream);
+        try {
+            pathInput = startUpPath.getApplicationStartUp() + "/input.txt";
+            pathOutput = startUpPath.getApplicationStartUp() + "/output.txt";
+        } catch (Exception e) {
 
-        list.runCommands();
-        System.out.println(list.getAllBits());
+            e.printStackTrace();
+        }
+
+
+        try(FileInputStream inputStream = new FileInputStream(pathInput);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(pathOutput))) {
+
+            ListOfBits list = new ListOfBits(inputStream, writer);
+
+            list.runCommands();
+
+            list.outputResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
