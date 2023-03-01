@@ -1,6 +1,5 @@
 package com.sidroded;
 
-import com.sidroded.logic.ApplicationStartUpPath;
 import com.sidroded.logic.ListOfBits;
 
 import java.io.*;
@@ -8,14 +7,11 @@ import java.io.*;
 public class Main {
     public static void main(String[] args) {
 
-        //ApplicationStartUpPath startUpPath = new ApplicationStartUpPath();
         String pathInput = "";
         String pathOutput= "";
         String dir = System.getProperty("user.dir");
 
         try {
-            //pathInput = startUpPath.getApplicationStartUp() + "/input.txt";
-            //pathOutput = startUpPath.getApplicationStartUp() + "/output.txt";
             pathInput = dir + "/input.txt";
             pathOutput = dir + "/output.txt";
         } catch (Exception e) {
