@@ -97,13 +97,13 @@ public class ListOfBits {
                 if (sizeAfterSell > 0) {
                     allBids.put(bid, allBids.get(bid) - size);
                 } else {
-                    allBits.remove(bid);
+                    allBids.remove(bid);
                 }
             }
             case "buy" -> {
                 Ask ask = (Ask) allAsks.lastKey();
                 int sizeAfterPurchase = allAsks.get(ask) - size;
-                allAsks.put(ask, sizeAfterPurchase);
+                allBits.put(ask, sizeAfterPurchase);
 
                 if (sizeAfterPurchase > 0) {
                     allAsks.put(ask, sizeAfterPurchase);
