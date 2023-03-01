@@ -6,7 +6,6 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
-
         String pathInput = "";
         String pathOutput= "";
         String dir = System.getProperty("user.dir");
@@ -19,7 +18,6 @@ public class Main {
             e.printStackTrace();
         }
 
-
         try(FileInputStream inputStream = new FileInputStream(pathInput);
             BufferedWriter writer = new BufferedWriter(new FileWriter(pathOutput))) {
 
@@ -31,6 +29,5 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

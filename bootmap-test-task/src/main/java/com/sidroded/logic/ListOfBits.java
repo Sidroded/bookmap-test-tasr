@@ -3,7 +3,6 @@ package com.sidroded.logic;
 import com.sidroded.bitmodel.Bit;
 import com.sidroded.bits.Ask;
 import com.sidroded.bits.Bid;
-import com.sidroded.bits.Spread;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -17,6 +16,8 @@ public class ListOfBits {
     private final TreeMap<Bit, Integer> allAsks = new TreeMap<>();
     private final ArrayList<String> inputCommands = new ArrayList<>();
     private final StringBuilder result = new StringBuilder();
+    private static final String SELL = "sell";
+    private static final String BUY = "buy";
 
     public ListOfBits(FileInputStream inputStream, BufferedWriter writer) {
         this.inputStream = inputStream;
@@ -77,26 +78,30 @@ public class ListOfBits {
     private void order(String order, String sizeStr) {
         int size = Integer.parseInt(sizeStr);
         switch (order) {
-            case "sell" -> {
-                Bid bid = (Bid) allBids.firstKey();
-                int sizeAfterSell = allBids.get(bid) - size;
-                allBits.put(bid, sizeAfterSell);
+            case SELL -> {
+                if (!allBids.isEmpty()) {
+                    Bid bid = (Bid) allBids.firstKey();
+                    int sizeAfterSell = allBids.get(bid) - size;
+                    allBits.put(bid, sizeAfterSell);
 
-                if (sizeAfterSell > 0) {
-                    allBids.put(bid, sizeAfterSell);
-                } else {
-                    allBids.remove(bid);
+                    if (sizeAfterSell > 0) {
+                        allBids.put(bid, sizeAfterSell);
+                    } else {
+                        allBids.remove(bid);
+                    }
                 }
             }
-            case "buy" -> {
-                Ask ask = (Ask) allAsks.lastKey();
-                int sizeAfterPurchase = allAsks.get(ask) - size;
-                allBits.put(ask, sizeAfterPurchase);
+            case BUY -> {
+                if (!allAsks.isEmpty()) {
+                    Ask ask = (Ask) allAsks.lastKey();
+                    int sizeAfterPurchase = allAsks.get(ask) - size;
+                    allBits.put(ask, sizeAfterPurchase);
 
-                if (sizeAfterPurchase > 0) {
-                    allAsks.put(ask, sizeAfterPurchase);
-                } else {
-                    allAsks.remove(ask);
+                    if (sizeAfterPurchase > 0) {
+                        allAsks.put(ask, sizeAfterPurchase);
+                    } else {
+                        allAsks.remove(ask);
+                    }
                 }
             }
         }
@@ -124,10 +129,6 @@ public class ListOfBits {
                 } else {
                     allAsks.remove(ask);
                 }
-            }
-            case "spread" -> {
-                Spread spread = new Spread(price);
-                allBits.put(spread, size);
             }
         }
     }
