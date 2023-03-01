@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
 public class ApplicationStartUpPath {
 
     public Path getApplicationStartUp() throws UnsupportedEncodingException,
@@ -24,6 +23,7 @@ public class ApplicationStartUpPath {
             }
         }
         path = path.getParent();
+        System.out.println(path);
         return path;
     }
 }
