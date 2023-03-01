@@ -28,18 +28,6 @@ public class ListOfBits {
         return result.toString();
     }
 
-    public HashMap<Bit, Integer> getAllBits() {
-        return allBits;
-    }
-
-    public TreeMap<Bit, Integer> getAllBids() {
-        return allBids;
-    }
-
-    public TreeMap<Bit, Integer> getAllAsks() {
-        return allAsks;
-    }
-
     private void fillInputCommands() {
         try(Scanner scanner = new Scanner(inputStream);) {
 
@@ -67,7 +55,7 @@ public class ListOfBits {
                     if (parts.length == 2) {
                         getBest(parts[1]);
                     } else {
-                        getSize(parts[2]);
+                        getSize(parts[1], parts[2]);
                     }
             }
         }
@@ -95,7 +83,7 @@ public class ListOfBits {
                 allBits.put(bid, sizeAfterSell);
 
                 if (sizeAfterSell > 0) {
-                    allBids.put(bid, allBids.get(bid) - size);
+                    allBids.put(bid, sizeAfterSell);
                 } else {
                     allBids.remove(bid);
                 }
@@ -147,22 +135,28 @@ public class ListOfBits {
     private void getBest(String bestBit) {
         switch (bestBit) {
             case "best_bid" -> {
-                Bid bid = (Bid) allBids.firstKey();
-                result.append(bid.getPrice()).append(",").append(allBids.get(bid)).append("\n");
+                if (!allBids.isEmpty()) {
+                    Bid bid = (Bid) allBids.firstKey();
+                    result.append(bid.getPrice()).append(",").append(allBids.get(bid)).append("\n");
+                }
             }
             case "best_ask" -> {
-                Ask ask = (Ask) allAsks.lastKey();
-                result.append(ask.getPrice()).append(",").append(allAsks.get(ask)).append("\n");
+                if (!allAsks.isEmpty()) {
+                    Ask ask = (Ask) allAsks.lastKey();
+                    result.append(ask.getPrice()).append(",").append(allAsks.get(ask)).append("\n");
+                }
             }
         }
     }
 
-    private void getSize(String priceStr) {
-        int price = Integer.parseInt(priceStr);
-         for (var bit : allBits.entrySet()) {
-             if (bit.getKey().getPrice() == price) {
-                 result.append(allBits.get(bit.getKey())).append("\n");
-             }
-         }
+    private void getSize(String size, String priceStr) {
+        if (size.equals("size")) {
+            int price = Integer.parseInt(priceStr);
+            for (var bit : allBits.entrySet()) {
+                if (bit.getKey().getPrice() == price) {
+                    result.append(allBits.get(bit.getKey())).append("\n");
+                }
+            }
+        }
     }
 }
