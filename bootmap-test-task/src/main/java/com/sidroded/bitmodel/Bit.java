@@ -2,39 +2,29 @@ package com.sidroded.bitmodel;
 
 import java.util.Objects;
 
-public abstract class Bit implements Updatable, Comparable<Bit> {
-    private int size;
+public abstract class Bit implements Comparable<Bit> {
     private final int price;
 
-    public Bit(int price, int size) {
+    public Bit(int price) {
         this.price = price;
-        this.size = size;
     }
 
     public int getPrice() {
         return price;
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    @Override
-    public void update(int size) {
-        this.size = size;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bit bit = (Bit) o;
-        return size == bit.size && price == bit.price;
+        return price == bit.price;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(size, price);
+        return Objects.hash(price);
     }
 
     @Override
@@ -50,7 +40,6 @@ public abstract class Bit implements Updatable, Comparable<Bit> {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() +
-                " price=" + price +
-                " size=" + size;
+                " price=" + price;
     }
 }
